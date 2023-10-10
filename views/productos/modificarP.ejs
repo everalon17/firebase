@@ -1,0 +1,24 @@
+<%- include ("../templates/encabezado")%>
+<%- include ("../templates/menu")%>
+
+<div class="container mt-5">
+    <form action="/producto/editar" method="post">
+        <div class="card">
+            <div class="card-header">
+                <h1>Modificar usuario</h1>
+            </div>
+            <div class="card-body">
+                <input type="hidden" name="id" id="id" value="<%= product.id%>">
+                <input class="form-control mb-3" type="text" value="<%= product.nombre%>" name="nombre" id="nombre" placeholder="Nombre" autofocus>
+                <input class="form-control mb-3" type="text" value="<%= product.precio%>" name="precio" id="precio" placeholder="Precio">
+                <input class="form-control mb-3" type="text" value="<%= product.cantidad%>" name="cantidad" id="cantidad" placeholder="Cantidad">
+                <input class="form-control mb-3" type="file" value="<%= product.foto%>" name="foto" id="foto" placeholder="Seleccionar archivo">
+            </div>
+            <div class="card-footer">
+                <button class="form-control btn btn-primary" type="submit">Modificar producto</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<%- include ("../templates/pie")%>
