@@ -24,7 +24,8 @@ ruta.get("/editar/:id",async(req,res)=>{
     res.render("usuarios/modificar",{user});
 });
 
-ruta.post("/editar",async(req,res)=>{
+ruta.post("/editar",subirArchivoU(),async(req,res)=>{
+    req.body.foto=req.file.originalname;
     var error=await modificarUsuario(req.body);
     res.redirect("/");
 });

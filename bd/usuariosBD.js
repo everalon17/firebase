@@ -55,6 +55,8 @@ async function modificarUsuario(datos){
     var error = 1;
     var usuario = await buscarPorID(datos.id);
     if (usuario != undefined) {
+        var fotoRuta = './web/Usuarios/images/' + usuario.foto;
+        await fs.unlink(fotoRuta);                
         var user=new Usuario(datos.id,datos)
         error=1;
         if (user.bandera==0){

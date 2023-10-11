@@ -23,7 +23,8 @@ ruta.get("/editar/:id", async(req, res) => {
     res.render("productos/modificarP", {product});
 });
   
-ruta.post("/editar", async(req, res) => {
+ruta.post("/editar",subirArchivoP(), async(req, res) => {
+    req.body.foto=req.file.originalname;
     var error = await modificarProducto(req.body);
     res.redirect("/producto");
 });
