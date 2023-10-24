@@ -54,11 +54,13 @@ async function buscarProdPorId(id){
 async function modificarProducto(datos){
     var error = 1;
     var producto = await buscarProdPorId(datos.id);
+    if (datos.foto==producto.foto) {
+        datos.foto = datos.fotoVieja;
+    } else {
+        var fotoRuta = './web/Productos/images/' + producto.foto;
+        await fs.unlink(fotoRuta);
+    }
     if(producto != undefined){
-        if (datos.foto) {
-            var fotoRuta = './web/Productos/images/' + producto.foto;
-            await fs.unlink(fotoRuta);                
-        }
         var product = new Producto(datos.id,datos);
         var error = 1;
         if (product.bandera == 0){

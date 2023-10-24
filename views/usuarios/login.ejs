@@ -1,0 +1,19 @@
+<%- include ("../templates/encabezado")%>
+
+<div class="container mt-5">
+    <form action="/login" method="post">
+        <div class="card">
+            <h1>LOGIN</h1>
+        </div>
+        <div class="card-body">
+            <input class="form-control mb-3" type="text" name="usuario" id="usuario" placeholder="Usuario" autofocus>
+            <input class="form-control mb-3" type="password" name="password" id="password" placeholder="Password" autofocus>
+        </div>
+        <div  class="card-footer">
+            <button class="form-control btn btn-primary" type="submit">Login</button>
+            <a class="form-control btn btn-secundary" href="/nuevoUsuario">Registro</a>
+        </div>
+    </form>
+</div>
+
+<%- include ("../templates/pie")%>

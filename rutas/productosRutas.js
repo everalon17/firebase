@@ -1,14 +1,15 @@
 var ruta = require("express").Router();
 var {subirArchivoP} = require("../middleware/middlewares");
 var { mostrarProductos, nuevoProducto, buscarProdPorId, modificarProducto, borrarProducto } = require("../bd/productosBD");
+var { autorizado,admin } = require("../middleware/funcionesPassword");
 
-ruta.get("/", async(req,res)=>{
+ruta.get("/producto", async(req,res)=>{
     var productos = await mostrarProductos();
-    console.log(productos);
+    //console.log(productos);
     res.render("productos/mostrarP", {productos});
 });
 
-ruta.get("/nuevoproducto", async(req, res) => {
+ruta.get("/nuevoproducto",admin, async(req, res) => {
     res.render("productos/nuevoP");
 });
 
@@ -18,18 +19,22 @@ ruta.post("/nuevoproducto",subirArchivoP(), async(req, res) => {
     res.redirect("/producto");
 });
   
-ruta.get("/editar/:id", async(req, res) => {
+ruta.get("/editarP/:id", async(req, res) => {
     var product = await buscarProdPorId(req.params.id);
     res.render("productos/modificarP", {product});
 });
   
-ruta.post("/editar",subirArchivoP(), async(req, res) => {
-    req.body.foto=req.file.originalname;
+ruta.post("/editarP",subirArchivoP(), async(req, res) => {
+    if (req.file!=undefined) {
+        req.body.foto=req.file.originalname;        
+    } else {
+        req.body.foto = req.body.fotoVieja;        
+    }
     var error = await modificarProducto(req.body);
     res.redirect("/producto");
 });
   
-ruta.get("/borrar/:id", async(req, res) => {
+ruta.get("/borrarP/:id", async(req, res) => {
     await borrarProducto(req.params.id);
     res.redirect("/producto");
 });

@@ -2,13 +2,14 @@
 <%- include ("../templates/menu")%>
 
 <div class="container mt-5">
-    <form action="/producto/editar" method="post" enctype="multipart/form-data">
+    <form action="/editarP" method="post" enctype="multipart/form-data">
         <div class="card">
             <div class="card-header">
                 <h1>Modificar usuario</h1>
             </div>
             <div class="card-body">
                 <input type="hidden" name="id" id="id" value="<%= product.id%>">
+                <input type="hidden" name="fotoVieja" id="fotoVieja" value="<%= product.foto%>">
                 <input class="form-control mb-3" type="text" value="<%= product.nombre%>" name="nombre" id="nombre" placeholder="Nombre" autofocus>
                 <input class="form-control mb-3" type="text" value="<%= product.precio%>" name="precio" id="precio" placeholder="Precio">
                 <input class="form-control mb-3" type="text" value="<%= product.cantidad%>" name="cantidad" id="cantidad" placeholder="Cantidad">

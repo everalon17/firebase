@@ -1,12 +1,38 @@
 var conexion=require("./conexion").conexionUsu;
+var {encriptarPassword, validarPassword} = require("../middleware/funcionesPassword");
 var Usuario=require("../modelos/Usuario");
 var fs = require('fs').promises;
-var {subirArchivoU} = require("../middleware/middlewares");
 
-async function mostrarUsuarios(){
+async function login(datos){
+    var user = undefined;
+    var usuarioObjeto;
+    try{
+        var usuarios = await conexion.where('usuario','=',datos.usuario).get();
+        if(usuarios.docs.length==0){
+            return undefined;
+        } 
+        usuarios.docs.filter((doc)=>{
+            var validar = validarPassword(datos.password,doc.data().password,doc.data().salt);
+            if(validar){
+                usuarioObjeto = new Usuario(doc.id,doc.data());
+                if(usuarioObjeto.bandera==0){
+                    user=usuarioObjeto.obtenerDatos;
+                }
+            }
+            else 
+                return undefined;
+        });
+    }
+    catch(err){
+        console.log("Error al recuperar al usuario: "+ err);
+    }
+    return user;
+}
+
+async function  mostrarUsuarios(){
     var users=[];
     try{
-        var usuarios = await conexion.get();;
+        var usuarios = await conexion.get();
         usuarios.forEach(usuario => {
             var user=new Usuario(usuario.id, usuario.data());
             if (user.bandera==0) {
@@ -21,8 +47,12 @@ async function mostrarUsuarios(){
 }
 
 async function nuevoUsuario(datos) {
-    var user=new Usuario(null,datos)
-    //var error=1;
+    var {hash,salt} = encriptarPassword(datos.password);
+    datos.password=hash;
+    datos.salt=salt;
+    datos.admin=false;
+    var user=new Usuario(null,datos);
+    var error=1;
     if (user.bandera==0) {
         try{
             await conexion.doc().set(user.obtenerDatos);
@@ -54,9 +84,22 @@ async function buscarPorID(id){
 async function modificarUsuario(datos){
     var error = 1;
     var usuario = await buscarPorID(datos.id);
-    if (usuario != undefined) {
+    console.log(datos.foto);
+    if (datos.foto==usuario.foto) {
+        datos.foto = datos.fotoVieja;
+    } else {
         var fotoRuta = './web/Usuarios/images/' + usuario.foto;
-        await fs.unlink(fotoRuta);                
+        await fs.unlink(fotoRuta);
+    }
+    if (usuario != undefined) {
+        if (datos.password="") {
+            datos.password=datos.passwordViejo;
+            datos.salt = datos.saltViejo;            
+        } else {
+            var {salt,hash} = encriptarPassword(datos.password);
+            datos.password = hash;
+            datos.salt = salt;        
+        }
         var user=new Usuario(datos.id,datos)
         error=1;
         if (user.bandera==0){
@@ -97,5 +140,6 @@ module.exports={
     buscarPorID,
     nuevoUsuario,
     modificarUsuario,
-    borrarUsuario
+    borrarUsuario,
+    login
 }
